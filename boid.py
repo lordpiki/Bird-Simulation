@@ -68,8 +68,22 @@ class Boid:
             return desired_direction
         else:
             return pygame.Vector2(0, 0)
+        
+    def follow_mouse(self):
+        if pygame.mouse.get_pressed()[0]:  # Check if the left mouse button is held down
+            mouse_position = pygame.mouse.get_pos()
+            desired_direction = pygame.Vector2(mouse_position[0] - self.x, mouse_position[1] - self.y)
+            desired_direction.normalize_ip()
+
+            self.velocity += desired_direction
+            
+
 
     def update(self, boids):
+        
+        self.follow_mouse()
+
+        
         separation_force = self.separation(boids)
         alignment_force = self.alignment(boids)
         cohesion_force = self.cohesion(boids)
