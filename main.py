@@ -3,7 +3,7 @@ from boid import Boid
 import random
 
 # Constants
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 1500, 900
 FPS = 60
 
 # Initialize Pygame
@@ -12,7 +12,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 
 # Create Boids
-num_boids = 50
+num_boids = 150
 boids = [Boid(random.randint(0, WIDTH), random.randint(0, HEIGHT)) for _ in range(num_boids)]
 
 # Main Loop
@@ -24,7 +24,7 @@ while running:
 
     # Update Boids
     for boid in boids:
-        boid.update()
+        boid.update(boids)
 
     # Draw Boids
     screen.fill((0, 0, 0))
