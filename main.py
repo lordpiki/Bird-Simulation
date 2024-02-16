@@ -13,7 +13,7 @@ clock = pygame.time.Clock()
 
 # Create Boids
 num_boids = 150
-boids = [Boid(random.randint(0, WIDTH), random.randint(0, HEIGHT)) for _ in range(num_boids)]
+boids = [Boid(random.randint(0, WIDTH), random.randint(0, HEIGHT), int(random.randrange(0, 2))) for _ in range(num_boids)]
 
 # Main Loop
 running = True

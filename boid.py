@@ -9,11 +9,12 @@ WIDTH, HEIGHT = 1600, 1000
 
 
 class Boid:
-    def __init__(self, x, y):
+    def __init__(self, x, y, scout_group_num=0):
         self.x = x
         self.y = y
         self.velocity = pygame.Vector2(random.uniform(-1, 1), random.uniform(-1, 1))
         self.acceleration = pygame.Vector2(0, 0)
+        self.scout_group_num = scout_group_num
 
     def separation(self, boids):
         separation_radius = SEPERATION_RADIUS  # Adjust this value based on the desired separation distance
@@ -104,12 +105,19 @@ class Boid:
             self.velocity.y = (self.velocity.y / speed) * min_speed
         
         
+        # Apply bias behavior
+        bias_val = 0.01  # Adjust the bias strength as needed
+        if self.scout_group_num == 1:
+            self.apply_bias(bias_val, 1)
+        elif self.scout_group_num == 2:
+            self.apply_bias(bias_val, -1)
+        
 # Apply turn-around behavior based on screen edges
         left_margin = 300
         right_margin = WIDTH - 300
         top_margin = 300
         bottom_margin = HEIGHT - 300
-        turn_factor = 0.5  # Adjust as needed
+        turn_factor = 0.9  # Adjust as needed
 
         if self.x < left_margin:
             self.velocity.x += turn_factor
@@ -121,6 +129,10 @@ class Boid:
             self.velocity.y += turn_factor
 
     
+
+    def apply_bias(self, bias_val, direction):
+        # Apply bias to the Boid's velocity
+        self.velocity.x = (1 - bias_val) * self.velocity.x + (bias_val * direction)
 
     def draw(self, screen):
         pygame.draw.circle(screen, (255, 255, 255), (int(self.x), int(self.y)), 3)
