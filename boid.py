@@ -79,30 +79,30 @@ class Boid:
             
 
 
-    def update(self, boids):
+    def update(self, boids, seperation_weight = 4.5, alignment_weight = 1.0, cohesion_weight = 0.5):
         
         self.follow_mouse()
-
-        
         separation_force = self.separation(boids)
         alignment_force = self.alignment(boids)
         cohesion_force = self.cohesion(boids)
 
-        # Adjust weights for each rule based on desired behavior
-        separation_weight = 4.5
-        alignment_weight = 1.0
-        cohesion_weight = 1.0
 
         # Apply the rules to adjust the Boid's velocity
-        self.acceleration = (separation_force * separation_weight +
+        self.acceleration = (separation_force * seperation_weight +
                              alignment_force * alignment_weight +
                              cohesion_force * cohesion_weight)
 
         # Update velocity and position
         self.velocity += self.acceleration
 
-        # Set minimum and maximum speed
-        min_speed = 0.5
+
+        self.check_speed();        
+        self.check_bias()
+        self.check_margins()        
+# Apply turn-around behavior based on screen edges
+
+    def check_speed(self):
+        min_speed = 0.75
         max_speed = 5.0
 
         self.x += self.velocity.x
@@ -118,15 +118,8 @@ class Boid:
             self.velocity.x = (self.velocity.x / speed) * min_speed
             self.velocity.y = (self.velocity.y / speed) * min_speed
         
-        
-        # Apply bias behavior
-        bias_val = 0.01  # Adjust the bias strength as needed
-        if self.scout_group_num == 1:
-            self.apply_bias(bias_val, 1)
-        elif self.scout_group_num == 2:
-            self.apply_bias(bias_val, -1)
-        
-# Apply turn-around behavior based on screen edges
+    
+    def check_margins(self):
         left_margin = 300
         right_margin = WIDTH - 300
         top_margin = 300
@@ -141,9 +134,18 @@ class Boid:
             self.velocity.y -= turn_factor
         if self.y < top_margin:
             self.velocity.y += turn_factor
-
+        
     
-
+    
+    def check_bias(self):
+        # Apply bias behavior
+        bias_val = 0.01  # Adjust the bias strength as needed
+        if self.scout_group_num == 1:
+            self.apply_bias(bias_val, 1)
+        elif self.scout_group_num == 2:
+            self.apply_bias(bias_val, -1)
+    
+    
     def apply_bias(self, bias_val, direction):
         # Apply bias to the Boid's velocity
         self.velocity.x = (1 - bias_val) * self.velocity.x + (bias_val * direction)
